@@ -71,14 +71,14 @@ jobs:
       - name: User Service image build aur push karo
         uses: docker/build-push-action@v5
         with:
-          context: ./user_service
+          context: ./user_service/config
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/microservices-user:latest
 
       - name: Product Service image build aur push karo
         uses: docker/build-push-action@v5
         with:
-          context: ./product_service
+          context: ./product_service/config
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/microservices-product:latest
 
