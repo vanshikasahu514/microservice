@@ -1,0 +1,97 @@
+
+
+services:
+
+  # ─── PostgreSQL for User Service ───────────────────
+  users_postgres:
+    image: postgres:15          
+    environment:
+      POSTGRES_DB: users_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres123
+    volumes:
+
+      - users_data:/var/lib/postgresql/data   
+    networks:
+      - microservices_net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d users_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # ─── PostgreSQL for Product Service ────────────────
+  products_postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: products_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres123
+    volumes:
+      - products_data:/var/lib/postgresql/data
+    networks:
+      - microservices_net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d products_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # ─── User Service ──────────────────────────────────
+  user_service:
+    build: ./user_service/config        
+    ports:
+      - "8001:8001"              
+    environment:
+      DOCKER_ENV: true
+      DB_HOST: users_postgres    
+      DB_NAME: users_db
+      DB_USER: postgres
+      DB_PASSWORD: postgres123
+    depends_on:
+       users_postgres:
+          condition: service_healthy           
+    networks:
+      - microservices_net
+
+  # ─── Product Service ───────────────────────────────
+  product_service:
+    build: ./product_service/config
+    ports:
+      - "8002:8002"
+    environment:
+      DOCKER_ENV: true
+      DB_HOST: products_postgres
+      DB_NAME: products_db
+      DB_USER: postgres
+      DB_PASSWORD: postgres123
+    depends_on:
+      products_postgres:
+        condition: service_healthy
+    networks:
+      - microservices_net
+
+  # ─── API Gateway ───────────────────────────────────
+  gateway:
+    build: ./gateway
+    ports:
+      - "5000:5000"
+    environment:
+      DOCKER_ENV: true
+      USER_SERVICE_URL: http://user_service:8001      
+      PRODUCT_SERVICE_URL: http://product_service:8002
+    depends_on:
+      - user_service
+      - product_service
+    networks:
+      - microservices_net
+
+
+volumes:
+  users_data:
+  products_data:
+
+
+networks:
+  microservices_net:
+    driver: bridge

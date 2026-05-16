@@ -1,0 +1,15 @@
+{
+  "contract_name": "user_service_register",
+  "version": "1.0",
+  "endpoint": "/api/users/register/",
+  "method": "POST",
+  "expected_response": {
+    "status_code": 201,
+    "required_fields": ["id", "username", "email"],
+    "field_types": {
+      "id": "int",
+      "username": "str",
+      "email": "str"
+    }
+  }
+}
