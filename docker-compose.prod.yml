@@ -1,0 +1,46 @@
+# docker-compose.prod.yml
+version: '3.8'
+
+services:
+  api-gateway:
+    build: ./api-gateway
+    ports:
+      - "5000:5000"
+    environment:
+      - USER_SERVICE_URL=${USER_SERVICE_URL}
+      - PRODUCT_SERVICE_URL=${PRODUCT_SERVICE_URL}
+      - SECRET_KEY=${GATEWAY_SECRET_KEY}
+    depends_on:
+      - user-service
+      - product-service
+
+  user-service:
+    build: ./user-service
+    expose:
+      - "8001"
+    environment:
+      - DATABASE_URL=${USER_DB_URL}
+      - SECRET_KEY=${USER_SECRET_KEY}
+      - REDIS_URL=${REDIS_URL}
+      - DEBUG=False
+    command: >
+      sh -c "python manage.py migrate &&
+             gunicorn config.wsgi:application --bind 0.0.0.0:8001"
+
+  product-service:
+    build: ./product-service
+    expose:
+      - "8002"
+    environment:
+      - DATABASE_URL=${PRODUCT_DB_URL}
+      - SECRET_KEY=${PRODUCT_SECRET_KEY}
+      - REDIS_URL=${REDIS_URL}
+      - DEBUG=False
+    command: >
+      sh -c "python manage.py migrate &&
+             gunicorn config.wsgi:application --bind 0.0.0.0:8002"
+
+  redis:
+    image: redis:7-alpine
+    expose:
+      - "6379"

@@ -1,0 +1,36 @@
+services:
+  - type: web
+    name: api-gateway
+    runtime: docker
+    dockerfilePath: ./api-gateway/Dockerfile
+    plan: free
+    envVars:
+      - key: USER_SERVICE_URL
+        value: https://user-service.onrender.com
+      - key: PRODUCT_SERVICE_URL
+        value: https://product-service.onrender.com
+
+  - type: web
+    name: user-service
+    runtime: docker
+    dockerfilePath: ./user-service/config/Dockerfile
+    plan: free
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: users-db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+
+  - type: web
+    name: product-service
+    runtime: docker
+    dockerfilePath: ./product-service/config/Dockerfile
+    plan: free
+
+databases:
+  - name: users-db
+    plan: free
+  - name: products-db
+    plan: free

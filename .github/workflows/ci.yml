@@ -2,9 +2,9 @@ name: Microservices CI/CD Pipeline
 
 on:
   push:
-    branches: [ main ]       # main pe push hone par
+    branches: [ main ]       
   pull_request:
-    branches: [ main ]       # PR aane par
+    branches: [ main ]       
 
 jobs:
 
