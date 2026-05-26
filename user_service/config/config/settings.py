@@ -168,3 +168,8 @@ REST_FRAMEWORK = {
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1' , ".up.railway.app",
     "microservice-production-17eb.up.railway.app",]
+
+    
+CSRF_TRUSTED_ORIGINS = [
+    "https://microservice-production-17eb.up.railway.app",
+]
