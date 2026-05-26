@@ -24,9 +24,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-y_7g61%hczf2ew4q^&o=3p(lrhggo0cj^^mt!38!8@t3aybk_%'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -164,4 +163,5 @@ REST_FRAMEWORK = {
     ),
 }
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1' , ".up.railway.app",
+    "microservice-production-17eb.up.railway.app",]
